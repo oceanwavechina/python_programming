@@ -15,3 +15,7 @@ models
 admin
 1. python manage.py createsuperuser
 2. register model to admin.py
+
+templates
+1. create static directory: template & static
+2. create html template file (using js and css)
