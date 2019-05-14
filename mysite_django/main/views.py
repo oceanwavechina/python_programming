@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Tutorial, TutorialCategory, TutorialSeries
+from .models import Tutorial, TutorialCategory, TutorialSeries, Book
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from .forms import NewUserForm
+from .forms import NewUserForm, BookForm
+from django.core.files.storage import FileSystemStorage
 
 def single_slug(request, single_slug):
     categories = [c.category_slug for c in TutorialCategory.objects.all()]
@@ -87,3 +88,31 @@ def login_request(request):
 
     form = AuthenticationForm
     return render(request, "main/login.html", {'form':form})
+
+def upload(request):
+    context = {}
+    if request.method == 'POST':
+        uploaded_file = request.FILES['document'] # 对应html中的inpu的那个
+        print(uploaded_file.name)
+        print(uploaded_file.size)
+        fs = FileSystemStorage()
+        # 这里重命名文件，django会自动重命名，不会覆盖原来的
+        name = fs.save(uploaded_file.name, uploaded_file)
+        # 这里用返回的name，是因为可能有重名的情况
+        context['url'] = fs.url(name)
+
+    return render(request, 'main/upload.html', context)
+
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'main/book_list.html', {'books':books})
+
+def upload_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES)
+        if form.is_valid:
+            form.save()
+            return redirect('main:book_list')
+    else:
+        form = BookForm()
+    return render(request, 'main/upload_book.html', {'form':form})
