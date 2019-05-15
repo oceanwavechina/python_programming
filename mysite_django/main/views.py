@@ -6,6 +6,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import NewUserForm, BookForm
 from django.core.files.storage import FileSystemStorage
+from django.views.generic import ListView, CreateView
+from django.urls import reverse_lazy
 
 def single_slug(request, single_slug):
     categories = [c.category_slug for c in TutorialCategory.objects.all()]
@@ -116,3 +118,18 @@ def upload_book(request):
     else:
         form = BookForm()
     return render(request, 'main/upload_book.html', {'form':form})
+
+# class-based views
+# http://ccbv.co.uk/
+class BookList(ListView):
+    model = Book
+    template_name = 'main/class_book_list.html'
+    context_object_name = 'books' #传给template的名字
+
+class UploadBookView(CreateView):
+    model = Book
+    # fields = ('title', 'author', 'pdf', 'cover')
+    # fields = ('title', 'author', 'pdf')
+    success_url = reverse_lazy('main:class_book_list')
+    template_name = 'main/upload_book.html'
+    form_class = BookForm
