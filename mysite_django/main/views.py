@@ -119,6 +119,12 @@ def upload_book(request):
         form = BookForm()
     return render(request, 'main/upload_book.html', {'form':form})
 
+def delete_book(request, pk):
+    if request.method == 'POST':
+        book = Book.objects.get(pk=pk)
+        book.delete()
+    return redirect('main:book_list')
+
 # class-based views
 # http://ccbv.co.uk/
 class BookList(ListView):

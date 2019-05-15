@@ -45,3 +45,10 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+
+    # 删除数据库记录的同时删除磁盘上的文件
+    def delete(self, *args, ** kwargs):
+        self.pdf.delete()
+        self.cover.delete()
+        super().delete(*args, **kwargs)
