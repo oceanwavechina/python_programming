@@ -19,3 +19,7 @@ admin
 templates
 1. create static directory: template & static
 2. create html template file (using js and css)
+
+# 内容
+1. 登录，注册
+2. 文件上传（两种方式）， 删除，classbased 的 view
